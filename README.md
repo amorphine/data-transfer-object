@@ -207,6 +207,10 @@ Likewise, if you're trying to set non-defined properties, you'll get a `DataTran
 composer test
 ```
 
+### Limitations
+- PHP 7.4 types are not supported: neither type checks are performed on value assign nor value cast
+- Opcache: types and data sources are resolved through PHP comments so ensure `opcache.save_comments` equals `1`
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
