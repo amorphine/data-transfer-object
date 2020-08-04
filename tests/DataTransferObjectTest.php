@@ -101,7 +101,7 @@ class DataTransferObjectTest extends TestCase
              * @var integer
              * @source nonExistingSourceField
              */
-            public $fieldName;
+            public $existingField;
         };
     }
 
@@ -277,13 +277,12 @@ class DataTransferObjectTest extends TestCase
 
     public function testUninitializedError()
     {
-
-        $this->expectErrorMessageMatches('/Invalid type: expected `class@anonymous.*::integerField` to be of type `integer`, instead got value `null`, which is NULL/');
-
         $dto = new class([]) extends DataTransferObject {
             /** @var integer */
-            public $integerField = 0;
+            public $integerField = 123;
         };
+
+        $this->assertEquals(123, $dto->integerField);
     }
 
     public function testNotScalarAndNotDtoType()

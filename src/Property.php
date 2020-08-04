@@ -4,6 +4,7 @@ namespace Amorphine\DataTransferObject;
 
 use Amorphine\DataTransferObject\Helpers\Polyfills;
 use Amorphine\DataTransferObject\Interfaces\IProperty;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
@@ -71,8 +72,33 @@ abstract class Property implements IProperty
      */
     protected $arrayTypes = [];
 
+    /**
+     * @var ReflectionProperty
+     */
+    protected $reflectionProperty;
+
+    /**
+     * @var ReflectionClass
+     */
+    protected $declaringClass;
+
+    /**
+     * @var boolean
+     */
+    protected $hasDefaultValue;
+
     public function __construct(ReflectionProperty $property)
     {
+        $this->name = $property->getName();
+
+        $this->isDefault = $property->isDefault();
+
+        $this->reflectionProperty = $property;
+
+        $this->declaringClass = $property->getDeclaringClass();
+
+        $this->hasDefaultValue = !is_null($this->declaringClass->getDefaultProperties()[$this->name] ?? null);
+
         $docComment = $property->getDocComment();
 
         preg_match(
@@ -81,11 +107,7 @@ abstract class Property implements IProperty
             $sourceStrMatches
         );
 
-        $this->name = $property->getName();
-
         $this->source = $sourceStrMatches[1] ?? $this->name;
-
-        $this->isDefault = $property->isDefault();
     }
 
     /**
@@ -192,6 +214,30 @@ abstract class Property implements IProperty
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasDefaultValue(): bool
+    {
+        return $this->hasDefaultValue;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReflectionProperty(): ReflectionProperty
+    {
+        return $this->reflectionProperty;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDeclaringClass(): ReflectionClass
+    {
+        return $this->declaringClass;
     }
 
     /**

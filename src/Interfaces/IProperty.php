@@ -3,6 +3,9 @@
 namespace Amorphine\DataTransferObject\Interfaces;
 
 
+use ReflectionClass;
+use ReflectionProperty;
+
 /**
  * Class Property
  *
@@ -41,7 +44,7 @@ interface IProperty
     public function isNullable(): bool;
 
     /**
-     * Check the field has been declared at compile time or dynamic
+     * Check the field has been declared at compile time
      *
      * @return bool
      */
@@ -75,4 +78,25 @@ interface IProperty
      * @return bool
      */
     public function isValidType($value): bool;
+
+    /**
+     * Get original reflection property
+     *
+     * @return ReflectionProperty
+     */
+    public function getReflectionProperty(): ReflectionProperty;
+
+    /**
+     * Get declaring class
+     *
+     * @return ReflectionClass
+     */
+    public function getDeclaringClass(): ReflectionClass;
+
+    /**
+     * Check property has default value
+     *
+     * @return bool
+     */
+    public function hasDefaultValue(): bool;
 }
