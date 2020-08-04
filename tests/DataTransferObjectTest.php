@@ -133,7 +133,8 @@ class DataTransferObjectTest extends TestCase
         };
     }
 
-    function testNotDtoCastTypeFromArray() {
+    function testNotDtoCastTypeFromArray()
+    {
         $this->expectException(DataTransferObjectError::class);
 
         $dto = new class(['fieldName' => [['field' => 1], ['field' => 2]]]) extends DataTransferObject {
@@ -142,7 +143,8 @@ class DataTransferObjectTest extends TestCase
         };
     }
 
-    function testCastEmptyArray() {
+    function testCastEmptyArray()
+    {
         $dto = new class(['fieldName' => []]) extends DataTransferObject {
             /** @var integer[] */
             public $fieldName;
@@ -166,7 +168,8 @@ class DataTransferObjectTest extends TestCase
         $this->assertSame($v, $dto->fieldName);
     }
 
-    function testNestedDto() {
+    function testNestedDto()
+    {
         $dto = new DtoA([
             'bField' => [
                 'integerField' => 123,
@@ -214,12 +217,12 @@ class DataTransferObjectTest extends TestCase
         };
 
         $this->assertSame($dto->bFieldArr[0]->integerField, 999);
+
         $this->assertSame($dto->bFieldArr[1]->integerField, 888);
-
-
     }
 
-    public function testIterableSupport() {
+    public function testIterableSupport()
+    {
         $v = [1, 2, 3];
 
         $dto = new class(['fieldName' => new ArrayIterator($v)]) extends DataTransferObject {
@@ -262,7 +265,8 @@ class DataTransferObjectTest extends TestCase
         $this->assertSame(555, $dto->bFieldIterable[2]->integerField);
     }
 
-    public function testStaticFieldsAreNotFilled() {
+    public function testStaticFieldsAreNotFilled()
+    {
 
         $dto = new class(['staticField' => true]) extends DataTransferObject {
             public static $staticField;
@@ -271,7 +275,8 @@ class DataTransferObjectTest extends TestCase
         $this->assertNull($dto::$staticField);
     }
 
-    public function testUninitializedError() {
+    public function testUninitializedError()
+    {
 
         $this->expectErrorMessageMatches('/Invalid type: expected `class@anonymous.*::integerField` to be of type `integer`, instead got value `null`, which is NULL/');
 
@@ -281,13 +286,43 @@ class DataTransferObjectTest extends TestCase
         };
     }
 
-    public function testNotScalarAndNotDtoType() {
+    public function testNotScalarAndNotDtoType()
+    {
         $this->expectException(DataTransferObjectError::class);
 
-        $dto = new class(['field' => 1 ]) extends DataTransferObject {
+        $dto = new class(['field' => 1]) extends DataTransferObject {
             /** @var Str */
             public $field;
         };
+    }
+
+    public function testIntegerCasts()
+    {
+        $dto = new class([
+            'f' => 'string'
+        ]) extends DataTransferObject {
+            /** @var integer */
+            public $f;
+        };
+        $this->assertEquals(0, $dto->f);
+
+        $dto = new class([
+            'f' => true
+        ]) extends DataTransferObject {
+            /** @var integer */
+            public $f;
+        };
+        $this->assertEquals(1, $dto->f);
+
+
+        $this->expectException(DataTransferObjectError::class);
+        $dto = new class([
+            'f' => []
+        ]) extends DataTransferObject {
+            /** @var integer */
+            public $f;
+        };
+        $this->assertEquals(0, $dto->f);
     }
 
     public function constructionProvider(): array
