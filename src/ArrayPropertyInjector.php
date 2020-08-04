@@ -33,15 +33,22 @@ class ArrayPropertyInjector implements IPropertyInjector
         foreach ($properties as $propertyName => $property) {
             $sourceField = $property->getSource();
 
-            if (
-                !isset($source[$sourceField])
-                && !$property->isDefault()
-                && !$property->isNullable()
-            ) {
-                throw DataTransferObjectError::uninitialized(
-                    static::class,
-                    $property->getSource()
-                );
+            $sourceValueSet = isset($source[$sourceField]);
+
+            if (!$sourceValueSet) {
+                // source does not contain value but there's default one, so ve leave it unchanged
+                if ($property->hasDefaultValue()) {
+
+                    return;
+                }
+
+                if (!$property->isNullable() && !$property->isDefault()) {
+                    // no source value, not default and field is not nullable, throwing exception
+                    throw DataTransferObjectError::uninitialized(
+                        static::class,
+                        $property->getSource()
+                    );
+                }
             }
 
             $value = $source[$sourceField] ?? $this->{$propertyName} ?? null;
