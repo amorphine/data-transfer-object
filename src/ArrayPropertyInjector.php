@@ -38,8 +38,7 @@ class ArrayPropertyInjector implements IPropertyInjector
             if (!$sourceValueSet) {
                 // source does not contain value but there's default one, so ve leave it unchanged
                 if ($property->hasDefaultValue()) {
-
-                    return;
+                    continue;
                 }
 
                 if (!$property->isNullable() && !$property->isDefault()) {
