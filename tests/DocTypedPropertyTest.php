@@ -245,4 +245,15 @@ class DocTypedPropertyTest extends TestCase
         });
         $this->assertEquals(['Amorphine\DataTransferObject\Tests\Classes\DtoC'], $field->getArrayTypes());
     }
+
+    public function testNativePropertiesAreIncluded() {
+        list($prop) = $this->getProperties(new class() {
+            /** @var string $prop */
+            public ?int $prop;
+        });
+
+        $this->assertTrue($prop->isNullable());
+        $this->assertTrue(in_array('integer', $prop->getTypes()));
+        $this->assertTrue(in_array('string', $prop->getTypes()));
+    }
 }

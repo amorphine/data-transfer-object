@@ -137,6 +137,12 @@ class PostData extends DataTransferObject
      * No type, which allows everything
      */
     public $property;
+    
+    /** 
+     * PHP types declaration supported
+     */
+    public ?int $property;
+
 }
 ```
 
@@ -208,7 +214,6 @@ composer test
 ```
 
 ### Limitations
-- PHP 7.4 types are not supported: neither type checks are performed on value assign nor value cast
 - Opcache: types and data sources are resolved through PHP comments so ensure `opcache.save_comments` equals `1`
 
 ## License
