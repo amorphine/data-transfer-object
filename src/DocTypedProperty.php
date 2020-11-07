@@ -1,10 +1,10 @@
 <?php
 
-
 namespace Amorphine\DataTransferObject;
 
 use Amorphine\DataTransferObject\Helpers\ClassUseResolver;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionProperty;
 
 /**
@@ -13,32 +13,9 @@ use ReflectionProperty;
  *
  * @package Amorphine\DataTransferObject
  */
-final class DocTypedProperty extends Property
+class DocTypedProperty extends Property
 {
     const VAR_DOCBLOCK_REGEX = '/@var ((?:(?:[\w?|\\\\<>])+(?:\[])?)+)/';
-
-    const SCALAR_INT = 'int';
-    const SCALAR_INTEGER = 'integer';
-    const SCALAR_BOOL = 'bool';
-    const SCALAR_BOOLEAN = 'boolean';
-    const SCALAR_FLOAT = 'float';
-    const SCALAR_DOUBLE = 'double';
-
-    const SCALAR_TYPES = [
-        self::SCALAR_INT,
-        self::SCALAR_INTEGER,
-        self::SCALAR_BOOL,
-        self::SCALAR_BOOLEAN,
-        self::SCALAR_FLOAT,
-        self::SCALAR_DOUBLE,
-    ];
-
-    const NORMALIZING_TYPE_MAP = [
-        self::SCALAR_INT => 'integer',
-        self::SCALAR_BOOL => 'boolean',
-        self::SCALAR_FLOAT => 'float',
-        self::SCALAR_DOUBLE => 'float',
-    ];
 
     /**
      * Type declaration as string
@@ -51,17 +28,7 @@ final class DocTypedProperty extends Property
     {
         parent::__construct($property);
 
-        $docComment = $property->getDocComment();
-
-        preg_match(
-            self::VAR_DOCBLOCK_REGEX,
-            $docComment,
-            $varStrMatches
-        );
-
-        $typeDeclaration = $varStrMatches[1] ?? null;
-
-        $this->types = $this->normalizeTypes(explode('|', $typeDeclaration), $property->getDeclaringClass());
+        $this->types = $this->extractTypes($property);
 
         $this->typeDeclaration = implode('|', $this->types);
 
@@ -72,6 +39,40 @@ final class DocTypedProperty extends Property
         $this->isMixedArray = $this->checkIsMixedArray($this->types);
 
         $this->arrayTypes = $this->resolveArrayTypes($this->types);
+    }
+
+    /**
+     * Get array of property types
+     *
+     * @param ReflectionProperty $property
+     * @return array
+     */
+    private function extractTypes(ReflectionProperty $property): array
+    {
+        // extract types from doc comment
+        $docComment = $property->getDocComment();
+
+        preg_match(
+            self::VAR_DOCBLOCK_REGEX,
+            $docComment,
+            $varStrMatches
+        );
+
+        $typeDeclaration = $varStrMatches[1] ?? null;
+
+        // since PHP 7.4 we should take into account declared type
+        if (method_exists($property, 'getType') && $reflectionType = $property->getType()) {
+
+            if ($reflectionType->allowsNull()) {
+                $typeDeclaration .= '|null';
+            }
+
+            if ($reflectionType instanceof ReflectionNamedType) {
+                $typeDeclaration .= '|' . $reflectionType->getName();
+            }
+        }
+
+        return $this->normalizeTypes(explode('|', $typeDeclaration), $property->getDeclaringClass());
     }
 
 

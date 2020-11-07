@@ -18,6 +18,29 @@ abstract class Property implements IProperty
 {
     const SOURCE_DOCBLOCK_REGEX = '/@source ((?:(?:[\w?|\\\\<>])+(?:\[])?)+)/';
 
+    const SCALAR_INT = 'int';
+    const SCALAR_INTEGER = 'integer';
+    const SCALAR_BOOL = 'bool';
+    const SCALAR_BOOLEAN = 'boolean';
+    const SCALAR_FLOAT = 'float';
+    const SCALAR_DOUBLE = 'double';
+
+    const SCALAR_TYPES = [
+        self::SCALAR_INT,
+        self::SCALAR_INTEGER,
+        self::SCALAR_BOOL,
+        self::SCALAR_BOOLEAN,
+        self::SCALAR_FLOAT,
+        self::SCALAR_DOUBLE,
+    ];
+
+    const NORMALIZING_TYPE_MAP = [
+        self::SCALAR_INT => 'integer',
+        self::SCALAR_BOOL => 'boolean',
+        self::SCALAR_FLOAT => 'float',
+        self::SCALAR_DOUBLE => 'float',
+    ];
+
     /**
      * @var string
      */
