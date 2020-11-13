@@ -146,8 +146,7 @@ class PostData extends DataTransferObject
 }
 ```
 
-PHP 7.4 typed properties are currently not supported: casts and checks are performed on declared doc types. 
-You are free to use typed properties but be aware of runtime errors which might happen when doc type and property type are not compatible.
+PHP 7.4 typed properties are the source of types like PHP doc is. The compatibility of declared types is upon to the developer. Feel free to use one of them, both or none at all.
 
 ### Automatic casting of nested DTOs
 
