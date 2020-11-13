@@ -3,7 +3,7 @@
 
 namespace Amorphine\DataTransferObject\Exceptions;
 
-use TypeError;
+use \TypeError;
 
 /**
  * Class DataTransferObjectError
