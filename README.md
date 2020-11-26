@@ -83,6 +83,13 @@ class PostData extends DataTransferObject
      * @var string 
      */
     public $property;
+
+    /**
+     * You can override property data source (array key)
+     *
+     * @source keyWithSomeAnotherName
+     */
+    public $property;
     
     /**
      * Classes with their FQCN: 
@@ -147,6 +154,21 @@ class PostData extends DataTransferObject
 ```
 
 PHP 7.4 typed properties are the source of types like PHP doc is. The compatibility of declared types is upon to the developer. Feel free to use one of them, both or none at all.
+
+### Source override
+By default, the array key the value is taken from is the property name. If you need to specify the key of the original array the value should be taken from you should use `@source` doc comment:
+
+```php
+class PostData extends DataTransferObject
+{
+    /** 
+     * @var AuthorData
+     * @source authorData
+     */
+    public $author;
+}
+```
+
 
 ### Automatic casting of nested DTOs
 
