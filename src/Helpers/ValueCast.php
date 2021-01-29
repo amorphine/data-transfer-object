@@ -21,6 +21,7 @@ class ValueCast
     const SCALAR_BOOLEAN = 'boolean';
     const SCALAR_FLOAT = 'float';
     const SCALAR_DOUBLE = 'double';
+    const SCALAR_STRING = 'string';
 
     const SCALAR_TYPES = [
         self::SCALAR_INT,
@@ -29,6 +30,7 @@ class ValueCast
         self::SCALAR_BOOLEAN,
         self::SCALAR_FLOAT,
         self::SCALAR_DOUBLE,
+        self::SCALAR_STRING,
     ];
 
     /**
